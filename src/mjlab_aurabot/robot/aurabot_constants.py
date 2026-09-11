@@ -38,16 +38,31 @@ RIGHT_WHEEL = 5
 POS_CTRL_JOINT_IDS = np.array([LEFT_HIP, LEFT_KNEE, RIGHT_HIP, RIGHT_KNEE])
 VEL_CTRL_JOINT_IDS = np.array([LEFT_WHEEL, RIGHT_WHEEL])
 
-DEFAULT_POSE = {
-    "left_hip": 0.7,
-    "left_knee": 1.5,
+NORMAL_POSE = {
+    "left_hip": 0.0,
+    "left_knee": 0.0,
+    "right_hip": 0.0,
+    "right_knee": -0.0,
     "left_wheel": 0.0,
-    "right_hip": -0.7,
-    "right_knee": -1.5,
     "right_wheel": 0.0,
 }
 
+BIRD_POSE = {
+    "left_hip": 0.7,
+    "left_knee": 1.5,
+    "right_hip": -0.7,
+    "right_knee": -1.5,
+    "left_wheel": 0.0,
+    "right_wheel": 0.0,
+}
+
+DEFAULT_POSE = {
+    **BIRD_POSE,
+}
+
 DEFAULT_HEIGHT = 0.245
+NORMAL_HEIGHT = 0.343
+BIRD_HEIGHT = 0.245
 
 FULL_COLLISION = CollisionCfg(
     geom_names_expr=tuple([".*_collision"]),
@@ -98,7 +113,6 @@ if __name__ == "__main__":
 
     from mjlab.scene import SceneCfg, Scene
     from mjlab.terrains import TerrainImporterCfg
-    from mjlab.terrains.config import ROUGH_TERRAINS_CFG
 
     SCENE_CFG = SceneCfg(
         terrain=TerrainImporterCfg(terrain_type="plane"),

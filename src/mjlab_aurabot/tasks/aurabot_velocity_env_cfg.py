@@ -2,9 +2,7 @@
 """AuraBot velocity task environment configuration."""
 
 import math
-from dataclasses import dataclass, field
 from copy import deepcopy
-from xml.dom.minidom import Entity
 import torch
 
 from mjlab.envs import mdp, ManagerBasedRlEnv, ManagerBasedRlEnvCfg
@@ -30,6 +28,10 @@ from mjlab.sensor import ContactMatch, ContactSensorCfg
 from mjlab_aurabot.robot.aurabot_constants import (
     DEFAULT_AURABOT_CFG,
     DEFAULT_POSE,
+    NORMAL_POSE,
+    BIRD_POSE,
+    NORMAL_HEIGHT,
+    BIRD_HEIGHT,
     POS_CTRL_JOINT_NAMES,
     VEL_CTRL_JOINT_NAMES,
     POS_CTRL_JOINT_IDS,
@@ -45,7 +47,11 @@ SCENE_CFG = SceneCfg(
 )
 
 
-def aurabot_velocity_env_cfg(play: bool = False, static: bool = False) -> ManagerBasedRlEnvCfg:
+def aurabot_velocity_env_cfg(
+    play: bool = False,
+    static: bool = False,
+    mode_conditioned: bool = False,
+) -> ManagerBasedRlEnvCfg:
     """Create AuraBot velocity task environment configuration."""
 
     ################# Observations #################
@@ -55,6 +61,41 @@ def aurabot_velocity_env_cfg(play: bool = False, static: bool = False) -> Manage
         quat = env.sim.data.qpos[:, 3:7]
         quat = torch.where(quat[:, 0:1] < 0, -quat, quat)
         return quat
+
+    normal_pose = torch.tensor(
+        [NORMAL_POSE[name] for name in POS_CTRL_JOINT_NAMES], dtype=torch.float32
+    )
+    bird_pose = torch.tensor(
+        [BIRD_POSE[name] for name in POS_CTRL_JOINT_NAMES], dtype=torch.float32
+    )
+
+    def get_target_pose(env: ManagerBasedRlEnv) -> torch.Tensor:
+        alpha = getattr(env, "_mode_alpha", None)
+        if alpha is None:
+            alpha = torch.zeros(env.num_envs, device=env.device)
+        normal = normal_pose.to(device=env.device).expand(env.num_envs, -1)
+        bird = bird_pose.to(device=env.device).expand(env.num_envs, -1)
+        return torch.lerp(normal, bird, alpha.unsqueeze(1))
+
+    def reset_mode_state(env: ManagerBasedRlEnv, env_ids: torch.Tensor) -> None:
+        alpha = torch.randint(
+            0, 2, (env_ids.numel(),), device=env.device, dtype=torch.float32
+        )
+        if not hasattr(env, "_mode_alpha"):
+            env._mode_alpha = torch.zeros(env.num_envs, device=env.device)
+        env._mode_alpha[env_ids] = alpha
+
+        normal = normal_pose.to(device=env.device).expand(env_ids.numel(), -1)
+        bird = bird_pose.to(device=env.device).expand(env_ids.numel(), -1)
+        targets = torch.lerp(normal, bird, alpha.unsqueeze(1))
+        heights = torch.lerp(
+            torch.full_like(alpha, NORMAL_HEIGHT),
+            torch.full_like(alpha, BIRD_HEIGHT),
+            alpha,
+        )
+        for column, joint_id in enumerate(POS_CTRL_JOINT_IDS.tolist()):
+            env.sim.data.qpos[env_ids, joint_id + 7] = targets[:, column]
+        env.sim.data.qpos[env_ids, 2] = heights
 
     policy_terms = {
         "joint_pos": ObservationTermCfg(
@@ -79,6 +120,8 @@ def aurabot_velocity_env_cfg(play: bool = False, static: bool = False) -> Manage
             params={"command_name": "twist"},
         ),
     }
+    if mode_conditioned:
+        policy_terms["target_pose"] = ObservationTermCfg(func=get_target_pose)
 
     critic_terms = {
         **policy_terms,
@@ -207,6 +250,11 @@ def aurabot_velocity_env_cfg(play: bool = False, static: bool = False) -> Manage
         #     interval_range_s=(0.0, 0.0),
         # ),
     }
+    if mode_conditioned:
+        events["reset_mode_state"] = EventTermCfg(
+            func=reset_mode_state,
+            mode="reset",
+        )
 
     #################### Rewards ###################
 
@@ -223,6 +271,17 @@ def aurabot_velocity_env_cfg(play: bool = False, static: bool = False) -> Manage
         joints = env.sim.data.qpos[:, POS_CTRL_JOINT_IDS + 7]
         squared_error = torch.square(joints - targets)
         return torch.exp(-torch.mean(squared_error / std**2))
+
+    def dynamic_pose_reward(env: ManagerBasedRlEnv, std: float) -> torch.Tensor:
+        joints = env.sim.data.qpos[:, POS_CTRL_JOINT_IDS + 7]
+        targets = get_target_pose(env)
+        error = torch.sum(torch.square(joints - targets), dim=1)
+        return torch.exp(-error / std**2)
+
+    pose_reward = dynamic_pose_reward if mode_conditioned else sum_pose_reward
+    pose_params = {"std": math.sqrt(0.5)}
+    if not mode_conditioned:
+        pose_params["target_pose"] = DEFAULT_POSE
     
     rewards = {
         "track_linear_velocity": RewardTermCfg(
@@ -250,12 +309,9 @@ def aurabot_velocity_env_cfg(play: bool = False, static: bool = False) -> Manage
             },
         ),
         "pose": RewardTermCfg(
-            func=sum_pose_reward,
+            func=pose_reward,
             weight=0.5,
-            params={
-                "std": math.sqrt(0.5),
-                "target_pose": DEFAULT_POSE,
-            },
+            params=pose_params,
         ),
         "action_rate_l2": RewardTermCfg(func=mdp.action_rate_l2, weight=-0.1),
     }
@@ -410,3 +466,10 @@ AuraBotVelocityRlCfg = RslRlOnPolicyRunnerCfg(
     num_steps_per_env=24,
     max_iterations=60_000,
 )
+
+AuraBotModeRlCfg = deepcopy(AuraBotVelocityRlCfg)
+AuraBotModeRlCfg.experiment_name = "aurabot_mode_conditioned"
+
+
+def aurabot_mode_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
+    return aurabot_velocity_env_cfg(play=play, mode_conditioned=True)

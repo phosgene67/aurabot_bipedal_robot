@@ -47,6 +47,16 @@ Train with 2,048 parallel environments:
 uv run train Mjlab-Velocity-AuraBot --env.scene.num-envs 2048
 ```
 
+Train the new mode-conditioned policy:
+
+```
+uv run train Mjlab-Mode-AuraBot --env.scene.num-envs 1000
+```
+
+This policy receives the target leg pose as part of its observation and trains
+on both the normal and bird poses. Its checkpoints are saved under
+`logs/rsl_rl/aurabot_mode_conditioned/`.
+
 Training outputs are saved under `logs/rsl_rl/aurabot_velocity/`. Play a checkpoint with:
 
 ```
@@ -60,3 +70,9 @@ uv run play Mjlab-Velocity-AuraBot --checkpoint-file logs/rsl_rl/aurabot_bird_po
 - `src/mjlab_aurabot/robot/aurabot/`: MuJoCo robot model and assets.
 - `src/mjlab_aurabot/robot/aurabot_kinematics.py`: differential-drive wheel kinematics.
 - `sim.py`: standalone MuJoCo + ONNX policy playback.
+
+Run a trained mode-conditioned ONNX policy with `M` to switch between poses:
+
+```
+uv run python sim.py --mode-model-path logs/rsl_rl/aurabot_mode_conditioned/[run]/[model].onnx
+```

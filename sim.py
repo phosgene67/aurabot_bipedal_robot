@@ -15,7 +15,9 @@ import random
 
 from mjlab_aurabot.robot.aurabot_constants import (
     DEFAULT_POSE,
-    DEFAULT_HEIGHT,
+    NORMAL_POSE,
+    BIRD_POSE,
+    NORMAL_HEIGHT,
     LEFT_HIP,
     LEFT_KNEE,
     LEFT_WHEEL,
@@ -39,25 +41,45 @@ gyro_buffer = [[0.0] * 3] * buffer_size
 
 # Zero velocity management
 world_target: list[float] = [0.0, 0.0, 0.0]
+mode_alpha = 0.0
+mode_target_alpha = 0.0
+mode_transition_duration = 3.0
+
+NORMAL_POSE_VECTOR = np.array(
+    [NORMAL_POSE[name] for name in ("left_hip", "left_knee", "right_hip", "right_knee")],
+    dtype=np.float32,
+)
+BIRD_POSE_VECTOR = np.array(
+    [BIRD_POSE[name] for name in ("left_hip", "left_knee", "right_hip", "right_knee")],
+    dtype=np.float32,
+)
+
+
+def get_mode_pose():
+    return (1.0 - mode_alpha) * NORMAL_POSE_VECTOR + mode_alpha * BIRD_POSE_VECTOR
 
 def reset_robot(model, data, yaw=0.0):
     """Reset robot to default pose with specified yaw orientation."""
     global world_target
+    global mode_alpha
+    global mode_target_alpha
     world_target = [0.0, 0.0, yaw]
+    mode_alpha = 0.0
+    mode_target_alpha = 0.0
 
     # Set initial joint positions
     data.qpos = np.array([0.0] * model.nq)
-    data.qpos[7 + LEFT_HIP] = DEFAULT_POSE["left_hip"]
-    data.qpos[7 + LEFT_KNEE] = DEFAULT_POSE["left_knee"]
-    data.qpos[7 + RIGHT_HIP] = DEFAULT_POSE["right_hip"]
-    data.qpos[7 + RIGHT_KNEE] = DEFAULT_POSE["right_knee"]
-    data.qpos[7 + LEFT_WHEEL] = DEFAULT_POSE["left_wheel"]
-    data.qpos[7 + RIGHT_WHEEL] = DEFAULT_POSE["right_wheel"]
+    data.qpos[7 + LEFT_HIP] = NORMAL_POSE["left_hip"]
+    data.qpos[7 + LEFT_KNEE] = NORMAL_POSE["left_knee"]
+    data.qpos[7 + RIGHT_HIP] = NORMAL_POSE["right_hip"]
+    data.qpos[7 + RIGHT_KNEE] = NORMAL_POSE["right_knee"]
+    data.qpos[7 + LEFT_WHEEL] = NORMAL_POSE["left_wheel"]
+    data.qpos[7 + RIGHT_WHEEL] = NORMAL_POSE["right_wheel"]
 
     data.qvel = np.array([0.0] * model.nv)
 
     # Set robot initial position
-    data.qpos[2] = DEFAULT_HEIGHT
+    data.qpos[2] = NORMAL_HEIGHT
 
     # Set robot initial orientation (quaternion)
     cy = np.cos(yaw * 0.5)
@@ -72,7 +94,7 @@ def reset_robot(model, data, yaw=0.0):
     mujoco.mj_forward(model, data)
 
 
-def get_inputs(model, data, last_action, command, use_delay=False):
+def get_inputs(model, data, last_action, command, use_delay=False, target_pose=None):
     """Prepare observation dictionary for ONNX model inference."""
     obs = []
 
@@ -136,6 +158,9 @@ def get_inputs(model, data, last_action, command, use_delay=False):
     # Command
     obs.extend(command)
 
+    if target_pose is not None:
+        obs.extend(target_pose)
+
     # Debug
     # wheel_rad_per_s = np.array(obs[4:6])
     # wheel_rot_per_s = wheel_rad_per_s / (2 * np.pi)
@@ -161,9 +186,16 @@ def keyboard_callback(keycode, data):
     """Handle keyboard input for command control."""
     global command
     global world_target
+    global mode_target_alpha
     
     previous_command = command.copy()
-    if keycode == 265:  # Up arrow
+    if keycode in (77, 109):  # M or m
+        if command[0] == 0.0 and command[2] == 0.0:
+            mode_target_alpha = 1.0 - mode_target_alpha
+            print("Mode target:", "bird" if mode_target_alpha else "normal")
+        else:
+            print("Stop the robot before changing mode")
+    elif keycode == 265:  # Up arrow
         command[0] = min(command[0] + 0.25, 1.0)
     elif keycode == 264:  # Down arrow
         command[0] = max(command[0] - 0.25, -1.0)
@@ -228,18 +260,30 @@ def get_corrected_command(command, data, kp_pos=3.0, kv_pos=1.0, kp_yaw=1.0, kv_
     return corrected_command
 
 
+def update_mode(model):
+    global mode_alpha
+    step = model.opt.timestep * 4 / mode_transition_duration
+    if mode_alpha < mode_target_alpha:
+        mode_alpha = min(mode_alpha + step, mode_target_alpha)
+    else:
+        mode_alpha = max(mode_alpha - step, mode_target_alpha)
+
+
 if __name__ == "__main__":
     import onnxruntime as ort
     import onnx
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-o", "--onnx-model-path", type=str, default="logs/rsl_rl/aurabot_velocity/bests/default.onnx")
+    parser.add_argument("--mode-model-path", type=str, default=None)
     parser.add_argument("-d", "--delay", action="store_true", help="Whether to use delayed observations to simulate sensor latency.")
     args = parser.parse_args()
 
-    onnx_model = onnx.load(args.onnx_model_path)
+    model_path = args.mode_model_path or args.onnx_model_path
+    onnx_model = onnx.load(model_path)
     onnx.checker.check_model(onnx_model)
-    ort_sess = ort.InferenceSession(args.onnx_model_path)
+    ort_sess = ort.InferenceSession(model_path)
+    mode_model = args.mode_model_path is not None
 
     meta = ort_sess.get_modelmeta()
     print("ONNX model metadata:")
@@ -268,21 +312,34 @@ if __name__ == "__main__":
 
             # Infer at 50 Hz
             if step_counter % inf_period == 0:
+                if mode_model:
+                    update_mode(model)
 
                 # Get observation and run inference
-                inputs = get_inputs(model, data, last_action, get_corrected_command(command, data), use_delay=args.delay)
+                target_pose = get_mode_pose() if mode_model else None
+                inputs = get_inputs(
+                    model,
+                    data,
+                    last_action,
+                    get_corrected_command(command, data),
+                    use_delay=args.delay,
+                    target_pose=target_pose,
+                )
                 outputs = ort_sess.run(None, inputs)
                 action = outputs[0][0]
                 last_action = action.tolist()
 
                 # Apply action
-                data.ctrl[LEFT_HIP] = action[0] + DEFAULT_POSE["left_hip"]
-                data.ctrl[LEFT_KNEE] = action[1] + DEFAULT_POSE["left_knee"]
-                data.ctrl[RIGHT_HIP] = action[2] + DEFAULT_POSE["right_hip"]
-                data.ctrl[RIGHT_KNEE] = action[3] + DEFAULT_POSE["right_knee"]
+                action_offset = BIRD_POSE_VECTOR if mode_model else np.array(
+                    [DEFAULT_POSE["left_hip"], DEFAULT_POSE["left_knee"], DEFAULT_POSE["right_hip"], DEFAULT_POSE["right_knee"]],
+                    dtype=np.float32,
+                )
+                data.ctrl[LEFT_HIP] = action[0] + action_offset[0]
+                data.ctrl[LEFT_KNEE] = action[1] + action_offset[1]
+                data.ctrl[RIGHT_HIP] = action[2] + action_offset[2]
+                data.ctrl[RIGHT_KNEE] = action[3] + action_offset[3]
                 data.ctrl[LEFT_WHEEL] = action[4] * wheel_action_scale
                 data.ctrl[RIGHT_WHEEL] = action[5] * wheel_action_scale
-
             # Step simulation
             mujoco.mj_step(model, data)
             viewer.sync()
