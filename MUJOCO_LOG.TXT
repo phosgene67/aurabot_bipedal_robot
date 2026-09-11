@@ -1,0 +1,180 @@
+WARNING Fri Aug 14 23:18:22 2026: Attach conflict when attaching 'upkie' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Fri Aug 14 23:21:22 2026: Attach conflict when attaching 'upkie' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Fri Aug 14 23:31:11 2026: Attach conflict when attaching 'upkie' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Fri Aug 14 23:33:32 2026: Attach conflict when attaching 'upkie' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Fri Aug 14 23:42:24 2026: Attach conflict when attaching 'upkie' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Sat Aug 15 14:31:00 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Sat Aug 15 14:33:26 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Sat Aug 15 14:33:50 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Sat Aug 15 19:59:21 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Sat Aug 15 20:01:09 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Sat Aug 15 20:01:39 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Sat Aug 15 20:02:06 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Sat Aug 15 20:04:57 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Sat Aug 15 20:05:59 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Sat Aug 15 20:07:38 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Sat Aug 15 20:14:08 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Sat Aug 15 20:15:54 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Sat Aug 15 20:44:43 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 20:36:46 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 21:21:51 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 21:23:32 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 21:28:26 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 21:32:15 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 21:58:35 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:01:13 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:12:58 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:26:44 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:27:21 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:28:59 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:30:43 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:32:18 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:33:37 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:39:21 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:40:25 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:41:55 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:46:38 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:48:35 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:49:36 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:51:59 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:53:04 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:54:50 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:56:01 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 22:59:20 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 23:01:13 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 23:20:13 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 23:22:41 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 23:23:51 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 23:25:21 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 23:26:36 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 23:27:31 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 23:28:10 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 23:30:32 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 23:31:38 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 23:43:48 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 23:48:55 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 23:52:00 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Mon Sep  7 23:55:43 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Tue Sep  8 00:11:50 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Tue Sep  8 01:21:15 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Tue Sep  8 12:23:57 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+

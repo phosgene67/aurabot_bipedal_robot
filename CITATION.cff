@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Al Sami"
+    given-names: "Abdullah"
+title: "Mjlab-AuraBot: Reinforcement learning environments for a biped on wheels"
+version: 1.0.0
+doi: 10.5281/zenodo.18470777
+date-released: 2026-02-03
+url: "https://github.com/phosgene67/mjlab_aurabot"

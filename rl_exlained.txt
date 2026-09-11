@@ -1,0 +1,119 @@
+AuraBot RL Project Explained
+============================
+
+AuraBot is a simulated two-wheeled, two-legged robot. It learns to balance while following requested forward and turning speeds through reinforcement learning (RL).
+
+The basic control loop
+----------------------
+
+Robot sensors + target speed
+            |
+            v
+      Neural-network policy
+            |
+            v
+ Six motor commands (4 leg + 2 wheel)
+            |
+            v
+        MuJoCo physics
+            |
+            v
+ Reward: move correctly, stay upright, act smoothly
+            |
+            +-- repeat during training
+
+Current project layout
+----------------------
+
+- README.md: project instructions and commands.
+- sim.py: runs the exported ONNX policy in one CPU MuJoCo simulation.
+- src/mjlab_aurabot/tasks/aurabot_velocity_env_cfg.py: the RL task definition: observations, actions, rewards, terminations, curriculum, and PPO settings.
+- src/mjlab_aurabot/robot/aurabot_constants.py: robot configuration, default pose, simulation settings, and actuator names.
+- src/mjlab_aurabot/robot/aurabot_kinematics.py: equations converting wheel speeds to forward and turning motion.
+- src/mjlab_aurabot/robot/aurabot/robot.xml: the MuJoCo robot model, including masses, joints, motors, meshes, collisions, and material colours.
+- logs/rsl_rl/aurabot_velocity/bests/default.pt: pre-trained policy for MjLab/RSL-RL.
+- logs/rsl_rl/aurabot_velocity/bests/default.onnx: portable policy used by sim.py.
+
+The robot
+---------
+
+AuraBot has six controlled joints:
+
+- Four leg joints: left hip, left knee, right hip, right knee. These use position targets.
+- Two wheel joints: left wheel and right wheel. These use velocity targets.
+
+The policy does not command motor torque directly. It outputs leg-position adjustments and wheel-velocity commands. The default upright pose has every joint at zero and starts 0.343 m above the ground.
+
+The main body-shell materials are pink in robot.xml. The leg-link materials (femur and tibia) keep their original colour.
+
+What the agent sees
+-------------------
+
+Each policy decision uses a 22-number observation:
+
+- 4 leg joint positions
+- 2 wheel angular velocities
+- 4 trunk-orientation quaternion values
+- 3 trunk angular-velocity (gyro) values
+- 6 previous actions
+- 3 command values: forward velocity, sideways velocity, and yaw velocity
+
+During this task, sideways velocity is always zero. Training adds noise to the sensor values so the learned policy is less dependent on perfect simulation measurements.
+
+What the agent outputs
+----------------------
+
+The neural network returns six actions in this order:
+
+[left hip, left knee, right hip, right knee, left wheel, right wheel]
+
+The first four actions are added to the default leg pose. The last two actions are multiplied by 100 and used as wheel velocity targets.
+
+Rewards and failure conditions
+------------------------------
+
+The task rewards AuraBot for:
+
+- following the requested forward velocity;
+- following the requested turning velocity;
+- remaining upright;
+- staying near its normal leg pose.
+
+It penalizes fast changes in action, which encourages smooth behaviour.
+
+An episode ends when it reaches the time limit, tilts past 70 degrees, or a non-foot part of the robot touches the ground.
+
+Training with PPO
+-----------------
+
+The project uses PPO (Proximal Policy Optimization). During training:
+
+1. Many simulated AuraBots run in parallel.
+2. Each one receives a random velocity command.
+3. The policy controls each robot for 24 decisions.
+4. The trainer records states, actions, rewards, and failures.
+5. PPO improves the policy so actions with better long-term reward become more likely.
+6. This process repeats for up to 60,000 iterations.
+
+The actor (action chooser) and critic (state-value estimator) each use neural-network layers sized 512, 256, and 128. The curriculum begins with easier velocity targets, then broadens the speed range and adds random pushes.
+
+Running the project
+-------------------
+
+From the aurabot_RL folder:
+
+    uv run python sim.py
+
+This launches the CPU MuJoCo simulation. Use Up/Down for forward velocity, Left/Right for turning velocity, and Space to reset commands to zero.
+
+For MjLab playback or training:
+
+    uv run play Mjlab-Velocity-AuraBot --checkpoint-file logs/rsl_rl/aurabot_velocity/bests/default.pt
+    uv run train Mjlab-Velocity-AuraBot --env.scene.num-envs 2048
+
+Important idea
+--------------
+
+You do not write rules such as "if the robot leans forward, spin the wheels." 
+Instead, you define success with rewards and failure conditions.
+ The RL algorithm repeatedly tries actions in simulation and learns a neural-network controller that balances, moves, and recovers from disturbances.
