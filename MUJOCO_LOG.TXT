@@ -181,3 +181,9 @@ noslip_iterations: parent has 0 (default), child has 4, keeping parent value
 WARNING Fri Sep 11 14:42:03 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
 noslip_iterations: parent has 0 (default), child has 4, keeping parent value
 
+WARNING Fri Sep 11 15:24:54 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
+WARNING Fri Sep 11 15:52:17 2026: Attach conflict when attaching 'aurabot' to 'mjlab scene', policy is 'warning'
+noslip_iterations: parent has 0 (default), child has 4, keeping parent value
+
